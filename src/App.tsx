@@ -1,21 +1,34 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { lazy } from "react";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import RootLayout from "./components/ui/RootLayout";
 
-const Home = lazy(() => import("src/pages/Homepage"));
-const Search = lazy(() => import("src/pages/SearchPage"));
-const Topics = lazy(() => import("src/pages/TopicsPage"));
+import Homepage from "src/pages/Homepage";
+import SearchPage from "src/pages/SearchPage";
+import TopicsPage from "src/pages/TopicsPage";
+import SingleImage from "src/pages/SinglePage";
+import ModalLayout from "./components/ui/ModalLayout";
 
-const client = new QueryClient();
+const client = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60,
+    },
+  },
+});
 
 const App = () => {
   return (
     <QueryClientProvider client={client}>
       <Router>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/photos/:query" element={<Search />} />
-          <Route path="/photos/topic/:query" element={<Topics />} />
+          <Route element={<RootLayout />}>
+            <Route path="/" element={<Homepage />} />
+            <Route element={<ModalLayout />}>
+              <Route path="/:id" element={<SingleImage />} />
+            </Route>
+            <Route path="/photos/:query" element={<SearchPage />} />
+            <Route path="/photos/topic/:query" element={<TopicsPage />} />
+          </Route>
         </Routes>
       </Router>
     </QueryClientProvider>

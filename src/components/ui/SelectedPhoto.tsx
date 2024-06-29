@@ -1,39 +1,100 @@
-import { motion } from "framer-motion";
+import {
+  Box,
+  Center,
+  Container,
+  Text,
+  Image,
+  Avatar,
+  AvatarGroup,
+  Flex,
+  IconButton,
+  useDisclosure,
+} from "@chakra-ui/react";
+import { useState } from "react";
+import { Blurhash } from "react-blurhash";
+import { DownloadIcon } from "@chakra-ui/icons";
+import { useColorMode } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
+import ImageModal from "./ImageModal";
+import { useModalStore } from "@/src/state/modalStore";
 
-const SelectedCard = ({ selected }: { selected: Photo | null }) => {
-  return (
-    <div className="bg-transparent h-full w-full flex flex-col justify-end rounded-lg shadow-2xl relative z-[60]">
-      <motion.div
-        initial={{
-          opacity: 0,
-        }}
-        animate={{
-          opacity: 0.6,
-        }}
-        className="absolute inset-0 h-full w-full bg-black opacity-60 z-10"
+const SelectedCard = ({
+  selected,
+  isLoading,
+}: {
+  selected: Photo | null;
+  isLoading: boolean;
+}) => {
+  const [inside, setInside] = useState(false);
+  const navigate = useNavigate();
+  const { openModal } = useModalStore();
+
+  console.log("Selected photo is ", selected);
+
+  if (isLoading) {
+    return (
+      <Blurhash
+        hash={selected?.blur_hash || ""}
+        resolutionX={32}
+        resolutionY={32}
+        punch={1}
       />
-      <motion.div
-        initial={{
-          opacity: 0,
-          y: 100,
-        }}
-        animate={{
-          opacity: 1,
-          y: 0,
-        }}
-        transition={{
-          duration: 0.3,
-          ease: "easeInOut",
-        }}
-        className="relative px-8 pb-4 z-[70]"
+    );
+  }
+
+  return (
+    <Box
+      position="relative"
+      borderRadius="lg"
+      onClick={() => {
+        openModal();
+        navigate(`${selected?.id}`);
+      }}
+    >
+      <Image
+        src={selected.urls.regular}
+        objectFit="cover"
+        mb={2}
+        display="block"
+        cursor="zoom-in"
+        filter="auto"
+        transition="transform 0.5s, filter 0.5s"
+        _hover={{ transform: "scale(1.05)", brightness: "50%" }}
+      />
+      <Flex
+        position="absolute"
+        bottom={10}
+        left={10}
+        display={inside ? "flex" : "none"}
+        align="center"
+        transition="all 1s"
       >
-        <img
-          className="w-full h-full"
-          src={selected?.urls.full}
-          alt="main image"
+        <Text
+          fontSize={{ base: "0.7rem", md: "1.1rem", lg: "1.7rem" }}
+          mx={4}
+          order={2}
+        >
+          {selected?.user.username}
+        </Text>
+        <Avatar
+          src={selected?.user.profile_image.small}
+          alt={selected?.username}
         />
-      </motion.div>
-    </div>
+        <IconButton
+          order={3}
+          aria-label="Download image"
+          icon={<DownloadIcon />}
+          alignContent={"flex-end"}
+          size="lg"
+        />
+      </Flex>
+      {/* <ImageModal
+        selected={selected}
+        onOpen={onOpen}
+        onClose={onClose}
+        isOpen={isOpen}
+      /> */}
+    </Box>
   );
 };
 
