@@ -67,18 +67,22 @@ const Header = () => {
         align="center"
       >
         <Text
-          bgGradient="linear(to-l, purple.500, green.400)"
+          bgGradient="linear(to-tl, purple.300 30%, orange.400 40%)"
           bgClip="text"
           fontSize={{ base: "0px", md: "2rem", lg: "3rem" }}
+          mx={4}
+          fontFamily="Inter"
+          fontWeight={200}
         >
           Photo Smash
         </Text>
         <Image
-          boxSize="120px"
+          boxSize="5rem"
           objectFit="cover"
           alt="Photo Smash"
           src="/_logo.png"
           cursor="pointer"
+          borderRadius="full"
         />
       </Flex>
     </Flex>

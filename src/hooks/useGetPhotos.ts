@@ -4,12 +4,6 @@ import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { PAGE_SIZE } from "../utils/constants";
 
 export function useGetPhotos() {
-  // const orderValue = searchParams.get("order_by");
-
-  // const order = orderValue ?? "latest";
-
-  // const page = !searchParams.get("page") ? 1 : Number(searchParams.get("page"));
-
   const { data, isLoading, error, fetchNextPage, isFetching, hasNextPage } =
     useInfiniteQuery({
       queryKey: ["photos"],

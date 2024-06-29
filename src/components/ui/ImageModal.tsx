@@ -1,6 +1,7 @@
 import { CalendarIcon, DownloadIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 import {
+  Box,
   Button,
   Text,
   Modal,
@@ -141,18 +142,20 @@ const ImageModal = ({
                 />
                 Published {formatDistanceFromNow(selected?.created_at)}
               </Flex>
-              <Flex display={{ base: "none", md: "flex" }} align="center">
+              <HStack
+                textOverflow="ellipsis"
+                display={{ base: "none", md: "flex" }}
+                align="center"
+                spacing="12px"
+              >
                 {selected?.tags.map((tag, index) => (
                   <Tag
-                    size="sm"
+                    size="md"
                     borderRadius="md"
                     colorScheme="purple"
                     variant="solid"
                     fontFamily="fantasy"
-                    mx={2}
-                    px={4}
-                    textOverflow="ellipsis"
-                    minW={0}
+                    px={2}
                     textTransform={"capitalize"}
                     key={tag.title}
                     cursor="pointer"
@@ -160,7 +163,7 @@ const ImageModal = ({
                     {tag.title}
                   </Tag>
                 ))}
-              </Flex>
+              </HStack>
             </Stack>
           </ModalFooter>
         </ModalContent>

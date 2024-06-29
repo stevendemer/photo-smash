@@ -1,4 +1,5 @@
-import create from "zustand";
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 interface State {
   isOpen: boolean;
@@ -6,8 +7,16 @@ interface State {
   openModal: () => void;
 }
 
-export const useModalStore = create<State>((set) => ({
-  isOpen: false,
-  closeModal: () => set(() => ({ isOpen: false })),
-  openModal: () => set(() => ({ isOpen: true })),
-}));
+export const useModalStore = create<State>(
+  persist(
+    (set, get) => ({
+      isOpen: false,
+      closeModal: () => set(() => ({ isOpen: false })),
+      openModal: () => set(() => ({ isOpen: true })),
+    }),
+    {
+      name: "modal-storage",
+      storage: createJSONStorage(() => sessionStorage),
+    }
+  )
+);

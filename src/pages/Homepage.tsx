@@ -26,10 +26,20 @@ const Homepage = () => {
   );
 
   const allPhotos = useMemo(() => {
+    // handle duplicates
+    const seen = new Set();
+
     return photos?.pages.reduce((acc, page) => {
-      return [...acc, ...page];
+      page.forEach((item) => {
+        if (!seen.has(item.id)) {
+          seen.add(item.id);
+          acc.push(item);
+        }
+      });
+
+      return [...acc];
     }, []);
-  }, [photos]);
+  }, [photos?.pages]);
 
   if (error) {
     console.error(error);
@@ -55,7 +65,7 @@ const Homepage = () => {
       >
         <Masonry>
           {allPhotos.map((photo, index: number) => (
-            <Box overflow="hidden" m={2} key={index} ref={lastElementRef}>
+            <Box overflow="hidden" m={2} key={photo.id} ref={lastElementRef}>
               <SelectedCard isLoading={isLoading} selected={photo} />
             </Box>
           ))}
