@@ -10,12 +10,75 @@ import {
   Heading,
   Show,
   Hide,
+  Center,
+  Spinner,
+  useToast,
 } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 import MobileMenu from "./MobileMenu";
+import { useSearch } from "@/src/hooks/useSearch";
+import { FormEvent, useState } from "react";
+import useDebounce from "@/src/hooks/useDebounce";
+import { useQuery } from "@tanstack/react-query";
+import axios from "../../utils/axios";
+import { useSearchParams } from "react-router-dom";
 
 const Header = () => {
+  const [query, setQuery] = useState("");
   const { colorMode, toggleColorMode } = useColorMode();
+  // const { isLoading, error, data } = useSearch(query);
+  const toast = useToast();
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // const debouncedSearchTerm = useDebounce(query, 400);
+
+  // const { data, isLoading, error } = useQuery({
+  //   queryKey: ["search", query],
+  //   queryFn: async () => {
+  //     if (debouncedSearchTerm) {
+  //       const data = await axios.get(`search/photos`, {
+  //         params: {
+  //           query,
+  //         },
+  //       });
+  //       return data.data;
+  //     } else {
+  //       const data = await axios.get("photos");
+  //       return data.data;
+  //     }
+  //   },
+  // });
+
+  // console.log("Search is ", data);
+
+  // if (isLoading) {
+  //   return (
+  //     <Center>
+  //       <Spinner size="lg" />
+  //     </Center>
+  //   );
+  // }
+
+  // if (error) {
+  //   throw error;
+  // }
+
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!query) {
+      toast({
+        title: "Query is missing",
+        status: "error",
+        duration: 6000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    setSearchParams({ query });
+  };
 
   return (
     <Flex
@@ -36,27 +99,31 @@ const Header = () => {
         />
       </Flex>
       <Flex align="center">
-        <InputGroup>
-          <InputLeftElement pointerEvents="auto">
-            <SearchIcon
-              mt={2}
-              color={colorMode === "dark" ? "gray.100" : "gray.800"}
+        <form onSubmit={onSubmit}>
+          <InputGroup>
+            <InputLeftElement pointerEvents="auto">
+              <SearchIcon
+                mt={2}
+                color={colorMode === "dark" ? "gray.100" : "gray.800"}
+              />
+            </InputLeftElement>
+            <Input
+              width="auto"
+              htmlSize={20}
+              size="lg"
+              placeholder="Search..."
+              type="search"
+              _placeholder={{
+                color: colorMode === "dark" ? "gray.50" : "gray.700",
+                opacity: 0.4,
+              }}
+              color={colorMode === "dark" ? "gray.50" : "gray.700"}
+              borderColor="white"
+              value={query}
+              onChange={(e) => setQuery(e.currentTarget.value)}
             />
-          </InputLeftElement>
-          <Input
-            width="auto"
-            htmlSize={20}
-            size="lg"
-            placeholder="Search for a photo"
-            type="search"
-            _placeholder={{
-              color: colorMode === "dark" ? "gray.50" : "gray.700",
-              opacity: 0.4,
-            }}
-            color={colorMode === "dark" ? "gray.50" : "gray.700"}
-            borderColor="white"
-          />
-        </InputGroup>
+          </InputGroup>
+        </form>
       </Flex>
       <MobileMenu />
       <Flex

@@ -4,31 +4,42 @@ import { PAGE_SIZE } from "./constants";
 type Order = "latest" | "oldest" | "popular";
 
 export async function getPhotos({
-  pageParam,
+  pageParam = 1,
   order,
 }: {
   pageParam?: number;
   order?: string;
 }) {
-  const { data, status, statusText } = await axios.get(
-    `photos?page=${pageParam}&per_page=${PAGE_SIZE}`
-  );
+  const resp = await axios.get(`photos`, {
+    params: {
+      page: pageParam,
+      per_page: PAGE_SIZE,
+    },
+  });
 
-  if (status !== 200) {
-    console.error(statusText);
-    throw new Error("Error getting photos");
-  }
-
-  return data;
+  return resp.data;
 }
 
 export async function getPhoto({ id }: { id?: string }) {
-  const { data, status, statusText } = await axios.get(`photos/${id}`);
+  const resp = await axios.get(`photos/${id}`);
 
-  if (status !== 200) {
-    console.error(statusText);
-    throw new Error("Error getting photo statistics");
-  }
+  return resp.data;
+}
+
+export async function searchPhotos({
+  query,
+  pageParam = 1,
+}: {
+  query?: string;
+  pageParam?: number;
+}) {
+  const { data } = await axios.get(`search/photos`, {
+    params: {
+      query: query,
+      page: pageParam ?? 1,
+      per_page: PAGE_SIZE,
+    },
+  });
 
   return data;
 }

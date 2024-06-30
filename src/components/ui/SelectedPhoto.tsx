@@ -22,7 +22,7 @@ const SelectedCard = ({
   selected,
   isLoading,
 }: {
-  selected: Photo | null;
+  selected?: Photo | null;
   isLoading: boolean;
 }) => {
   const [inside, setInside] = useState(false);
@@ -52,7 +52,7 @@ const SelectedCard = ({
       }}
     >
       <Image
-        src={selected.urls.regular}
+        src={selected?.urls?.regular}
         objectFit="cover"
         mb={2}
         display="block"

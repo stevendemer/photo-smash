@@ -53,6 +53,9 @@ const Homepage = () => {
       </Center>
     );
   }
+
+  console.log("Photo results are ", photos);
+
   return (
     <>
       <ResponsiveMasonry
@@ -64,12 +67,16 @@ const Homepage = () => {
         }}
       >
         <Masonry>
-          {allPhotos.map((photo, index: number) => (
+          {allPhotos?.map((photo) => (
             <Box overflow="hidden" m={2} key={photo.id} ref={lastElementRef}>
               <SelectedCard isLoading={isLoading} selected={photo} />
             </Box>
           ))}
-          {isFetching && <Spinner size="xl" />}
+          {isFetching && (
+            <Center>
+              <Spinner size="xl" />
+            </Center>
+          )}
         </Masonry>
       </ResponsiveMasonry>
     </>

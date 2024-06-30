@@ -1,4 +1,6 @@
 import { CalendarIcon, DownloadIcon } from "@chakra-ui/icons";
+import SelectedCard from "./SelectedPhoto";
+import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -8,7 +10,6 @@ import {
   ModalOverlay,
   ModalHeader,
   ModalBody,
-  ModalFooter,
   ModalCloseButton,
   Tag,
   Image,
@@ -24,26 +25,45 @@ import {
   StatLabel,
   StatGroup,
   StatNumber,
-  StatHelpText,
+  Heading,
+  Center,
+  Spinner,
+  Grid,
+  GridItem,
 } from "@chakra-ui/react";
-import { useRef } from "react";
 import { formatDistanceFromNow } from "@/src/utils/helpers";
+import { useGetFeatured } from "@/src/hooks/useGetFeatured";
 
 const ImageModal = ({
   selected,
   isOpen,
   onClose,
 }: {
-  selected: Photo | null;
+  selected?: Photo | null;
   isOpen: boolean;
   onClose: () => void;
 }) => {
   //   const { isOpen, toggleModal } = useModalStore();
 
-  const btnRef = useRef(null);
+  // const { photos, isLoading, error } = useGetFeatured();
+
   const navigate = useNavigate();
 
-  console.log("Single photo is ", selected);
+  // if (isLoading) {
+  //   return (
+  //     <Center>
+  //       <Spinner size="lg" />
+  //     </Center>
+  //   );
+  // }
+
+  // if (error) {
+  //   throw error;
+  // }
+
+  // console.log("Single photo is ", selected);
+
+  // console.log("Featured photos are ", photos);
 
   return (
     <>
@@ -57,14 +77,14 @@ const ImageModal = ({
         }}
         isCentered
         scrollBehavior="outside"
-        finalFocusRef={btnRef}
       >
-        <ModalOverlay backdropFilter="blur(8px)" bg="whiteAlpha.100" />
+        <ModalOverlay backdropFilter="blur(8px)" bg="blackAlpha.400" />
         <ModalContent
           dropShadow="inherit"
           minHeight={"80vh"}
           minW="80vw"
           backgroundColor="blackAlpha.700"
+          overflowX="hidden"
         >
           <ModalHeader>
             <Flex
@@ -82,10 +102,10 @@ const ImageModal = ({
                   {selected?.user.username}
                 </Text>
 
-                <Avatar
-                  src={selected.user?.profile_image.small}
-                  alt={selected.user?.first_name}
-                />
+                {/* <Avatar
+                  src={selected?.user.profile_image.small}
+                  alt={selected?.user?.first_name} */}
+                {/* /> */}
               </Flex>
               <HStack spacing="12px" align="center" mx={4}>
                 <IconButton
@@ -107,8 +127,6 @@ const ImageModal = ({
                 borderRadius="md"
               />
             </Container>
-          </ModalBody>
-          <ModalFooter>
             <Stack
               w="100vw"
               spacing="3rem"
@@ -150,11 +168,11 @@ const ImageModal = ({
               >
                 {selected?.tags.map((tag, index) => (
                   <Tag
-                    size="md"
+                    size="lg"
                     borderRadius="md"
                     colorScheme="purple"
                     variant="solid"
-                    fontFamily="fantasy"
+                    fontFamily="sans-serif"
                     px={2}
                     textTransform={"capitalize"}
                     key={tag.title}
@@ -165,7 +183,21 @@ const ImageModal = ({
                 ))}
               </HStack>
             </Stack>
-          </ModalFooter>
+            <Flex direction="column" mt={20} minH="80vh" maxW="60vw">
+              <Heading mx={20}>Featured images</Heading>
+              <Grid templateColumns="repeat(3,1fr)" gap={4}>
+                {/* {photos?.results.map((photo: Photo) => (
+                  <GridItem m={2} key={photo.id}>
+                    <Image
+                      src={photo?.urls.raw}
+                      alt={photo.alt_description}
+                      objectFit="contain"
+                    />
+                  </GridItem> */}
+                {/* ))} */}
+              </Grid>
+            </Flex>
+          </ModalBody>
         </ModalContent>
       </Modal>
     </>
