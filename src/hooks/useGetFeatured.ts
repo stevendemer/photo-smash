@@ -1,16 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 import { searchPhotos } from "../utils/api";
+import { useParams } from "react-router-dom";
 
 export function useGetFeatured() {
-  const query = "cars";
+  const { id } = useParams();
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["featured", query],
-    queryFn: () => searchPhotos({ query }),
+    queryKey: ["collections", id],
+    queryFn: () => searchPhotos({ query: id }),
   });
 
   return {
-    photos: data,
+    collections: data,
     isLoading,
     error,
   };

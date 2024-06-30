@@ -37,9 +37,26 @@ export async function searchPhotos({
     params: {
       query: query,
       page: pageParam ?? 1,
-      per_page: PAGE_SIZE,
+      per_page: 10,
     },
   });
 
-  return data;
+  return data.results;
+}
+
+export async function searchCollections({
+  query,
+  pageParam = 1,
+}: {
+  query?: string;
+  pageParam?: number;
+}) {
+  const { data } = await axios.get(`search/collections`, {
+    params: {
+      query,
+      page: pageParam ?? 1,
+      per_page: PAGE_SIZE,
+    },
+  });
+  return data.results;
 }

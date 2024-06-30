@@ -48,7 +48,7 @@ const SelectedCard = ({
       borderRadius="lg"
       onClick={() => {
         openModal();
-        navigate(`${selected?.id}`);
+        navigate(`${selected?.slug}`);
       }}
     >
       <Image

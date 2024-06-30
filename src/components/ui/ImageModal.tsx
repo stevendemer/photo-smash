@@ -1,10 +1,7 @@
 import { CalendarIcon, DownloadIcon } from "@chakra-ui/icons";
 import SelectedCard from "./SelectedPhoto";
-import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import { useNavigate } from "react-router-dom";
 import {
-  Box,
-  Button,
   Text,
   Modal,
   ModalOverlay,
@@ -15,7 +12,6 @@ import {
   Image,
   ModalContent,
   Container,
-  Avatar,
   Flex,
   IconButton,
   TagLeftIcon,
@@ -30,6 +26,7 @@ import {
   Spinner,
   Grid,
   GridItem,
+  useToast,
 } from "@chakra-ui/react";
 import { formatDistanceFromNow } from "@/src/utils/helpers";
 import { useGetFeatured } from "@/src/hooks/useGetFeatured";
@@ -45,25 +42,32 @@ const ImageModal = ({
 }) => {
   //   const { isOpen, toggleModal } = useModalStore();
 
-  // const { photos, isLoading, error } = useGetFeatured();
+  const { collections, isLoading, error } = useGetFeatured();
+  const toast = useToast();
 
   const navigate = useNavigate();
 
-  // if (isLoading) {
-  //   return (
-  //     <Center>
-  //       <Spinner size="lg" />
-  //     </Center>
-  //   );
-  // }
+  if (isLoading) {
+    return (
+      <Center>
+        <Spinner size="lg" />
+      </Center>
+    );
+  }
 
-  // if (error) {
-  //   throw error;
-  // }
+  if (error) {
+    toast({
+      title: error.message,
+      status: "error",
+      isClosable: true,
+      orientation: "horizontal",
+    });
+    throw error;
+  }
 
   // console.log("Single photo is ", selected);
 
-  // console.log("Featured photos are ", photos);
+  console.log("Collection photos are ", collections);
 
   return (
     <>
@@ -161,22 +165,24 @@ const ImageModal = ({
                 Published {formatDistanceFromNow(selected?.created_at)}
               </Flex>
               <HStack
-                textOverflow="ellipsis"
                 display={{ base: "none", md: "flex" }}
                 align="center"
-                spacing="12px"
+                spacing="1.2rem"
+                maxW="70vw"
+                overflowX="scroll"
               >
                 {selected?.tags.map((tag, index) => (
                   <Tag
-                    size="lg"
+                    size="sm"
                     borderRadius="md"
                     colorScheme="purple"
                     variant="solid"
                     fontFamily="sans-serif"
-                    px={2}
                     textTransform={"capitalize"}
                     key={tag.title}
                     cursor="pointer"
+                    w="max-content"
+                    p={1}
                   >
                     {tag.title}
                   </Tag>
@@ -186,15 +192,15 @@ const ImageModal = ({
             <Flex direction="column" mt={20} minH="80vh" maxW="60vw">
               <Heading mx={20}>Featured images</Heading>
               <Grid templateColumns="repeat(3,1fr)" gap={4}>
-                {/* {photos?.results.map((photo: Photo) => (
-                  <GridItem m={2} key={photo.id}>
+                {collections?.map((collection: Photo) => (
+                  <GridItem m={2} key={collection.id}>
                     <Image
-                      src={photo?.urls.raw}
-                      alt={photo.alt_description}
+                      src={collection?.urls.raw}
+                      alt={collection?.alt_description}
                       objectFit="contain"
                     />
-                  </GridItem> */}
-                {/* ))} */}
+                  </GridItem>
+                ))}
               </Grid>
             </Flex>
           </ModalBody>
