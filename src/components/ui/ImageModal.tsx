@@ -25,15 +25,14 @@ import {
   Heading,
   Center,
   Spinner,
-  Grid,
-  GridItem,
   useToast,
   Box,
+  useOutsideClick,
+  useColorMode,
 } from "@chakra-ui/react";
 import { formatDistanceFromNow } from "@/src/utils/helpers";
 import { useGetFeatured } from "@/src/hooks/useGetFeatured";
-import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
-import { SyntheticEvent, WheelEventHandler, useEffect } from "react";
+import { useRef } from "react";
 
 const ImageModal = ({
   selected,
@@ -44,19 +43,30 @@ const ImageModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
+  const { colorMode } = useColorMode();
   const { collections, isLoading, error } = useGetFeatured();
   const toast = useToast();
-  const { openModal } = useModalStore();
+  const { openModal, closeModal } = useModalStore();
 
   const navigate = useNavigate();
 
-  if (isLoading) {
-    return (
-      <Center>
-        <Spinner size="lg" thickness="0.5" emptyColor="gray" />
-      </Center>
-    );
-  }
+  const ref = useRef(null);
+
+  useOutsideClick({
+    ref,
+    handler: () => {
+      closeModal();
+      navigate(-1);
+    },
+  });
+
+  // if (isLoading) {
+  //   return (
+  //     <Center>
+  //       <Spinner size="lg" thickness="0.5" emptyColor="gray" />
+  //     </Center>
+  //   );
+  // }
 
   if (error) {
     toast({
@@ -75,20 +85,24 @@ const ImageModal = ({
       <Modal
         motionPreset="slideInTop"
         size={"sm"}
+        isCentered
         isOpen={isOpen}
+        scrollBehavior="outside"
         onClose={() => {
-          onClose();
+          closeModal();
           navigate(-1);
         }}
-        isCentered
-        scrollBehavior="outside"
       >
-        <ModalOverlay backdropFilter="blur(8px)" bg="blackAlpha.400" />
+        <ModalOverlay
+          backdropFilter="blur(8px)"
+          bg={colorMode === "dark" ? "blackAlpha.400" : "whiteAlpha.400"}
+        />
         <ModalContent
           dropShadow="inherit"
           minHeight={"80vh"}
           minW="80vw"
           backgroundColor="blackAlpha.700"
+          bg={colorMode === "dark" ? "blackAlpha.700" : "whiteAlpha.700"}
           overflowX="hidden"
         >
           <ModalHeader>
@@ -96,13 +110,15 @@ const ImageModal = ({
               align="center"
               justify="space-between"
               mx={6}
-              borderBottom="1px solid white"
+              borderBottom="1px solid"
+              borderBottomColor={colorMode === "dark" ? "white" : "black"}
             >
               <Flex align="center" m={2}>
                 <Text
                   fontSize={{ base: "0.9rem", md: "1.2rem", lg: "1.7rem" }}
                   mx={4}
                   order={2}
+                  color={colorMode === "dark" ? "gray.100" : "black"}
                 >
                   {selected?.user.username}
                 </Text>
@@ -112,17 +128,15 @@ const ImageModal = ({
                   alt={selected?.user?.first_name}
                 />
               </Flex>
-              <HStack spacing="12px" align="center" mx={4}>
-                <IconButton
-                  icon={<DownloadIcon />}
-                  aria-label="Download image"
-                />
-                <IconButton icon={<TagLeftIcon />} aria-label="Like image" />
-              </HStack>
             </Flex>
           </ModalHeader>
-          <ModalCloseButton onClick={onClose} />
-          <ModalBody>
+          <ModalCloseButton
+            onClick={() => {
+              onClose();
+              navigate(-1);
+            }}
+          />
+          <ModalBody ref={ref}>
             <Container centerContent maxW={"container.lg"}>
               <Image
                 objectFit="contain"
@@ -137,6 +151,7 @@ const ImageModal = ({
               spacing="3rem"
               justify="flex-start"
               align="flex-start"
+              color={colorMode === "dark" ? "gray.50" : "black"}
             >
               <StatGroup>
                 <Stat mx={4} size="md">
@@ -171,7 +186,6 @@ const ImageModal = ({
                 spacing="4"
                 maxW="40vw"
                 overflowX="auto"
-                mx={20}
                 my={5}
                 flexWrap="nowrap"
                 zIndex="sticky"

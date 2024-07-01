@@ -8,9 +8,9 @@ const theme = extendTheme({
       "html, body": {
         fontFamily: "Lato",
         fontSize: "sm",
-        color: props.colorMode === "dark" ? "white" : "gray.700",
+        color: props.colorMode === "dark" ? "white" : "black",
         lineHeight: "tall",
-        backgroundColor: props.colorMode === "dark" ? "gray.900" : "gray.100",
+        backgroundColor: props.colorMode === "dark" ? "gray.900" : "gray.50",
       },
     }),
   },

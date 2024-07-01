@@ -114,11 +114,11 @@ const Header = () => {
               placeholder="Search..."
               type="search"
               _placeholder={{
-                color: colorMode === "dark" ? "gray.50" : "gray.700",
+                color: colorMode === "dark" ? "gray.50" : "black",
                 opacity: 0.4,
               }}
-              color={colorMode === "dark" ? "gray.50" : "gray.700"}
-              borderColor="white"
+              color={colorMode === "dark" ? "gray.50" : "black"}
+              borderColor={colorMode === "dark" ? "gray.50" : "black"}
               value={query}
               onChange={(e) => setQuery(e.currentTarget.value)}
             />

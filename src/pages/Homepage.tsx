@@ -74,7 +74,7 @@ const Homepage = () => {
           ))}
           {isFetching && (
             <Center>
-              <Spinner size="xl" />
+              <Spinner thickness="0.5" emptyColor="gray" size="xl" />
             </Center>
           )}
         </Masonry>
