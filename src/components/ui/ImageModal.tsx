@@ -1,5 +1,5 @@
 import { CalendarIcon, DownloadIcon } from "@chakra-ui/icons";
-import SelectedCard from "./SelectedPhoto";
+import { useModalStore } from "@/src/state/modalStore";
 import { useNavigate } from "react-router-dom";
 import {
   Text,
@@ -8,6 +8,7 @@ import {
   ModalHeader,
   ModalBody,
   ModalCloseButton,
+  Avatar,
   Tag,
   Image,
   ModalContent,
@@ -27,9 +28,12 @@ import {
   Grid,
   GridItem,
   useToast,
+  Box,
 } from "@chakra-ui/react";
 import { formatDistanceFromNow } from "@/src/utils/helpers";
 import { useGetFeatured } from "@/src/hooks/useGetFeatured";
+import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
+import { SyntheticEvent, WheelEventHandler, useEffect } from "react";
 
 const ImageModal = ({
   selected,
@@ -40,17 +44,16 @@ const ImageModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
-  //   const { isOpen, toggleModal } = useModalStore();
-
   const { collections, isLoading, error } = useGetFeatured();
   const toast = useToast();
+  const { openModal } = useModalStore();
 
   const navigate = useNavigate();
 
   if (isLoading) {
     return (
       <Center>
-        <Spinner size="lg" />
+        <Spinner size="lg" thickness="0.5" emptyColor="gray" />
       </Center>
     );
   }
@@ -65,9 +68,7 @@ const ImageModal = ({
     throw error;
   }
 
-  // console.log("Single photo is ", selected);
-
-  console.log("Collection photos are ", collections);
+  console.log("Collections are ", selected);
 
   return (
     <>
@@ -106,10 +107,10 @@ const ImageModal = ({
                   {selected?.user.username}
                 </Text>
 
-                {/* <Avatar
+                <Avatar
                   src={selected?.user.profile_image.small}
-                  alt={selected?.user?.first_name} */}
-                {/* /> */}
+                  alt={selected?.user?.first_name}
+                />
               </Flex>
               <HStack spacing="12px" align="center" mx={4}>
                 <IconButton
@@ -167,13 +168,31 @@ const ImageModal = ({
               <HStack
                 display={{ base: "none", md: "flex" }}
                 align="center"
-                spacing="1.2rem"
-                maxW="70vw"
-                overflowX="scroll"
+                spacing="4"
+                maxW="40vw"
+                overflowX="auto"
+                mx={20}
+                my={5}
+                flexWrap="nowrap"
+                zIndex="sticky"
+                top={0}
+                height="50px"
+                css={{
+                  WebkitOverflowScrolling: "touch",
+                  msOverflowStyle: "-ms-autohiding-scrollbar",
+                }}
+                sx={{
+                  scrollbarWidth: "none",
+                  "::webkit-scrollbar": {
+                    display: "none",
+                  },
+                }}
               >
                 {selected?.tags.map((tag, index) => (
                   <Tag
-                    size="sm"
+                    as="nav"
+                    flexShrink="0"
+                    size="md"
                     borderRadius="md"
                     colorScheme="purple"
                     variant="solid"
@@ -182,26 +201,47 @@ const ImageModal = ({
                     key={tag.title}
                     cursor="pointer"
                     w="max-content"
-                    p={1}
+                    p={2}
                   >
                     {tag.title}
                   </Tag>
                 ))}
               </HStack>
             </Stack>
-            <Flex direction="column" mt={20} minH="80vh" maxW="60vw">
-              <Heading mx={20}>Featured images</Heading>
-              <Grid templateColumns="repeat(3,1fr)" gap={4}>
+            <Flex direction="column" mt={28} minH="80vh" maxW="60vw">
+              <Heading mx={5}>Featured images</Heading>
+              <Box
+                sx={{ columnCount: [1, 2, 3], gap: "2rem" }}
+                w="100%"
+                p={4}
+                mx="auto"
+                overflow="hidden"
+              >
                 {collections?.map((collection: Photo) => (
-                  <GridItem m={2} key={collection.id}>
+                  <Box
+                    onClick={() => {
+                      openModal();
+                      navigate(`${collection?.slug}`);
+                    }}
+                    overflow="hidden"
+                    m={2}
+                    key={collection?.id}
+                  >
                     <Image
-                      src={collection?.urls.raw}
+                      filter="auto"
+                      cursor="zoom-in"
+                      key={collection.id}
+                      display="inline-block"
+                      src={collection?.urls?.raw}
                       alt={collection?.alt_description}
-                      objectFit="contain"
+                      objectFit="cover"
+                      w="100%"
+                      transition="transform 0.7s, filter 0.7s"
+                      _hover={{ transform: "scale(1.10)", brightness: "50%" }}
                     />
-                  </GridItem>
+                  </Box>
                 ))}
-              </Grid>
+              </Box>
             </Flex>
           </ModalBody>
         </ModalContent>

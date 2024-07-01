@@ -1,5 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { searchPhotos } from "../utils/api";
+import {
+  searchCollections,
+  searchCollectionsRelated,
+  searchPhotos,
+} from "../utils/api";
 import { useParams } from "react-router-dom";
 
 export function useGetFeatured() {
@@ -8,6 +12,10 @@ export function useGetFeatured() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["collections", id],
     queryFn: () => searchPhotos({ query: id }),
+    select: (data) => {
+      console.log("Data is ", data);
+      return data;
+    },
   });
 
   return {

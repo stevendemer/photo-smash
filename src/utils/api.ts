@@ -37,7 +37,7 @@ export async function searchPhotos({
     params: {
       query: query,
       page: pageParam ?? 1,
-      per_page: 10,
+      per_page: 15,
     },
   });
 
@@ -54,6 +54,22 @@ export async function searchCollections({
   const { data } = await axios.get(`search/collections`, {
     params: {
       query,
+      page: pageParam ?? 1,
+      per_page: PAGE_SIZE,
+    },
+  });
+  return data.results;
+}
+
+export async function searchCollectionsRelated({
+  query,
+  pageParam = 1,
+}: {
+  query?: string;
+  pageParam?: number;
+}) {
+  const { data } = await axios.get(`collections/${query}/related`, {
+    params: {
       page: pageParam ?? 1,
       per_page: PAGE_SIZE,
     },
